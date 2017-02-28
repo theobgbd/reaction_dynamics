@@ -1,0 +1,17 @@
+1 <ma
+9 <mb
+9 <mc
+0.27 <Evibi
+0 0.66 0.69
+0.69 <Ecollmax
+7.0 RABin
+500 < ncoup
+0.0001 < dt
+5 < tsup
+0.1 
+2 <-- isurf (1: LEPS early barrier - 2: LEPS late barrier - 3: DMorse)
+0 <-- DU=(DBC-DAB) (eV)
+0 <-- itraj
+1 <-- iprint
+1 <-- plotPES
+0 <-- Etat vib
