@@ -49,7 +49,7 @@ filetraj=open("traj.dat","w+")
 #filewheightpes=open("wheightpes.dat","w+")
 #fileresults=open("Results.dat","w+")
 #filewheightpes=open("wheightpes.dat","w+")
-#filePES=open("PES.dat","w+")
+filePES=open("PES.dat","w+")
 #filestat=open("/tmp/stats.dat","w")
 
 
@@ -296,6 +296,6 @@ while Ecoll < Ecollmax:
 #print(traj)
 if plotPES==1:
     #RP=pot.plotPES(isurf)
-    RP=pot.plotPEScontour(isurf,traj)
+    print(pot.plotPEScontour(isurf,traj)[2])
     print()
     

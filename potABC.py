@@ -223,7 +223,7 @@ def plotPES(isurf,**plotsettings):
     return R 
 
 
-def plotPEScontour(isurf,traj,**plotsettings):
+def plotPEScontour_old(isurf,traj,**plotsettings):
     uma_ua=1836
     Ang_ua=1.89
     ua_Ang=0.529
@@ -254,7 +254,7 @@ def plotPEScontour(isurf,traj,**plotsettings):
     Px=[]
     Py=[]
     Pz=[]
-    
+    RP=[0,0,0]
     Pxt=[]
     Pyt=[]
     Pzt=[]
@@ -267,7 +267,7 @@ def plotPEScontour(isurf,traj,**plotsettings):
                 RP[0]=j*Ang_ua
                 RP[1]=i*Ang_ua
                 RP[2]=RP[0]+RP[1]
-                Vpes=pot.PotABC(RP)
+                Vpes=PotABC(RP)
                 Px=Px+[RP[0]]
                 Py=Py+[RP[1]]
                 Pz=Pz+[Vpes*ua_eV]
@@ -301,9 +301,6 @@ def plotPEScontour(isurf,traj,**plotsettings):
         CS=plt.contour(X, Y, Z, np.arange(-5,0,0.5),zdir='z',inline=0.5 , linewidth=0.1)
         plt.axis([0,3.5, 0, 3.5])
         
-    
-    
-       
     #Plot de la surface
     
     
@@ -323,6 +320,99 @@ def plotPEScontour(isurf,traj,**plotsettings):
     plt.show()
     return R 
       
-      
+def plotPEScontour(isurf,traj,**plotsettings):
+    uma_ua=1836
+    Ang_ua=1.89
+    ua_Ang=0.529
+    eV_ua=0.0367512
+    ua_eV=27.21
+    timesec_ua=4.13411E4
+    LectPotABC(isurf)
+    filePES=open("PES.dat","w+")
+    filewheightpes=open("wheightpes.dat","w+")
+    from __main__ import Ecoll
+    from __main__ import Evib 
+    from __main__ import RABin
+    mpl.rcParams['text.usetex']=True
+    mpl.rcParams['text.latex.unicode']=True
+
+    if plotsettings.get("range") == None:
+        xi=0
+        xf=3.5
+        yi=0
+        yf=3.5
+    if plotsettings.get("depth") == None:
+        depth=60
+        
+    x=np.linspace(xi,xf,depth)
+    y=np.linspace(yi,yf,depth)
+    Px=[]
+    Py=[]
+    Pz=[]
+    RP=[0,0,0]
+    Pxt=[]
+    Pyt=[]
+    Pzt=[]
+    X, Y = np.meshgrid(x, y)
+    
+    if(isurf==1) or (isurf==2):
+        for i in x:
+            Pz=[]
+            for j in y:
+                RP[0]=j*Ang_ua
+                RP[1]=i*Ang_ua
+                RP[2]=RP[0]+RP[1]
+                Vpes=PotABC(RP)
+                Px=Px+[RP[0]]
+                Py=Py+[RP[1]]
+                Pz=Pz+[Vpes*ua_eV]
+                filewheightpes.write(str(Px)+str(" ") + str (Py)+str(" ") +str (Pz)+"\n")
+                filePES.write(str(RP[1]*ua_Ang)+str(" ")+str(RP[0]*ua_Ang)+str(" ")+str(Vpes*ua_eV)+"\n")
+            Pxt=Pxt+[Px]
+            Pyt=Pyt+[Py]
+            Pzt=Pzt+[Pz]
+        
+        Z=np.array(Pzt)
+       # CS=plt.contour(X, Y, Z, np.arange(-4.5,-2,0.5),zdir='z',inline=0.5 , linewidth=0.1)
+        #plt.axis([0,3.5, 0, 3.5])
+    
+    elif (isurf==3):
+        for i in x:
+            Pz=[]
+            for j in y:
+                RP[0]=(i)*Ang_ua
+                RP[1]=(j)*Ang_ua
+                RP[2]=RP[0]+RP[1]
+                Vpes=pot.PotABC(RP)
+                Px=Px+[RP[0]]
+                Py=Py+[RP[1]]
+                Pz=Pz+[Vpes*ua_eV]
+                filewheightpes.write(str(RP[1]*ua_Ang/mrbc)+str(" ") + str ((RP[0]+((mc*RP[1])/(mb+mc)))*ua_Ang/mrabc)+str(" ") +str (Vpes*ua_eV)+"\n")
+                filePES.write(str(RP[1]*ua_Ang)+str(" ")+str(RP[0]*ua_Ang)+str(" ")+str(Vpes*ua_eV)+"\n")
+            Pxt=Pxt+[Px]
+            Pyt=Pyt+[Py]
+            Pzt=Pzt+[Pz]
+        Z=np.array(Pzt)   
+        #CS=plt.contour(X, Y, Z, np.arange(-5,0,0.5),zdir='z',inline=0.5 , linewidth=0.1)
+        plt.axis([0,3.5, 0, 3.5])
+        
+    #Plot de la surface
+    
+#    
+#    plt.plot(traj[0],traj[1], '-b',linewidth=2) 
+#    plt.xlabel(r'$r_1$ $(A)$')
+#    plt.ylabel(r'$r_2$ $(A)$')
+#    
+#    plt.clabel(CS, inline=1, fontsize=10)
+#    
+#    plt.text(2.5, 3, r'$E_{coll}^i=%s$ eV'%(np.round(Ecoll*ua_eV,3)), fontsize=18)
+#    plt.text(2.5, 2.75, r'$E_{vib}^i=%s$ eV'%(np.round(Evib*ua_eV,3)), fontsize=18)
+#    #plt.text(2.5, 2.5, r'$E_{vib}^f=%s$ '%(np.round(Epc,3)), fontsize=18)
+#    
+    #Plot de la trajectoire
+    
+  
+    plt.show()
+    return [X,Y,Z]
 
     #cset = ax.contourf(Px, Py, Pz,zdir='z',offset=-10,cmap=cm.winter)    # winter colour map
